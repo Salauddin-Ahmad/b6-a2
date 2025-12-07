@@ -16,12 +16,13 @@ const initDB = async () => {
         id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL,
         email CITEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL,
+        password TEXT NOT NULL CHECK (LENGTH(password) >= 6),
         phone VARCHAR(20) NOT NULL,
         role VARCHAR(20) NOT NULL CHECK (role IN ('admin', 'customer'))
         )`
         
     );
+    console.log("table created")
   } catch (error: any) {
     console.error("DB init failed", error.message);
   }

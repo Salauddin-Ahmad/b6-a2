@@ -1,5 +1,6 @@
 import express from "express"
 import initDB from "./config/db";
+import router from "./routes";
 
 const app = express();
 
@@ -8,7 +9,7 @@ app.use(express.urlencoded({extended: true}))
 
 initDB()
 
-// app.use("/api/v1/", )
+app.use("/api/v1/", router)
 
 
 app.use((req, res) => {
