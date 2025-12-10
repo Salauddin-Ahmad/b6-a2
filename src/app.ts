@@ -15,7 +15,7 @@ app.use("/api/v1/", router)
 app.use((req, res) => {
   res.status(404).json({
     success: false,
-    message: "rote not found",
+    message: "route not found",
     path: req.path,
   });
 });
