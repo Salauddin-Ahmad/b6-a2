@@ -35,6 +35,18 @@ const initDB = async () => {
         CHECK (availability_status IN ('available', 'booked'))
     );
 
+
+    CREATE TABLE IF NOT EXISTS bookings (
+
+        id SERIAL PRIMARY KEY,
+        customer_id INT REFERENCES users(id) ON DELETE RESTRICT,
+        vehicle_id INT REFERENCES vehicles(id) ON DELETE RESTRICT,
+        rent_start_date DATE NOT NULL,
+        rent_end_date DATE NOT NULL,
+        total_price INTEGER NOT NULL,
+        status VARCHAR(20) DEFAULT 'active'
+);
+
 `);
 
     console.log("table created");
