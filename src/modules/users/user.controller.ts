@@ -22,13 +22,44 @@ const getAllUser = async (req: Request, res: Response) => {
 
 
 const updateUser = async (req: Request, res: Response) => {
+  const targetUserId = req.params.userId!; // user being updated
+  const loggedInUser = req.user!; // from JWT middleware
+
   try {
-    const result = await userService.updateUserService();
+   
+    if (
+      loggedInUser.role !== "admin" &&
+      loggedInUser.id !== Number(targetUserId)
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "You are not allowed to update this user",
+      });
+    }
+
+    // Remove forbidden fields
+    delete req.body.password; // nobody updates password here
+
+    if (loggedInUser.role !== "admin") {
+      delete req.body.role; 
+    }
+
+    const updatedUser = await userService.updateUserService(
+      targetUserId,
+      req.body
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
     res.status(200).json({
       success: true,
       message: "User updated successfully",
-      data: result.rows[0],
+      data: updatedUser,
     });
   } catch (error: any) {
     res.status(500).json({
@@ -36,17 +67,16 @@ const updateUser = async (req: Request, res: Response) => {
       message: error.message,
     });
   }
-
 };
 
 const deleteUser = async (req: Request, res: Response) => {
-try {
-    const result = await userService.updateUserService();
+  const id = req.params.id as string;
+  try {
+    const result = await userService.deleteUserService(id);
 
     res.status(200).json({
       success: true,
-      message: "User updated successfully",
-      data: result.rows[0],
+      message: "User deleted successfully",
     });
   } catch (error: any) {
     res.status(500).json({
@@ -54,7 +84,6 @@ try {
       message: error.message,
     });
   }
-    
 };
 
 export const userController = {
